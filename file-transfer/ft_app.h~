@@ -1,0 +1,81 @@
+#ifndef _FT_APP_H
+#define _FT_APP_H
+
+#define VERSION "2.0"
+
+// Changes:
+// Version----Coder----------Description
+// 2.0        EricC          Added options -k, -m, -p, -r, -v
+//                           Added Host SCP capability (not a system call)
+//                           Added Host file removable if desired
+//                           Added colors
+// 1.5        EricC          Change to allow user to enter remote number instead of remote ip addr
+//                           Also allow 0xFF for all remotes
+//                           Cleanup
+// 1.0        GeorgeW        Initial Version
+
+
+#define TRUE  1
+#define FALSE 0
+
+#define MAX_REMOTES 16
+
+#define DEF_HOST_PATH "/tmp/"
+#define HOST_BIT      0x10000
+
+#define PRINT_RESET "\e[m"
+#define PRINT_RED   "\e[31m"
+#define PRINT_GREEN "\e[32m"
+#define PRINT_CYAN  "\e[36m"
+
+typedef struct
+{
+  unsigned int  rmtNum;
+  char          ipAddr[17];
+} RemoteConnInfo;
+
+void PrintUsage(void);
+int SSHConnect(const char *ipAddr, ssh_session *sess, ssh_channel *chan, char *user, char *pword);
+int SSHDisconnect(ssh_session *sess);
+int OpenChannel(ssh_session *sess, ssh_channel *chan);
+int OpenRemoteShell(ssh_channel *chan);
+int SCPSendFile(ssh_session *sess, char *srcPathFile, char *dstPath);
+int SCPTransferFile(ssh_scp *scp, char *srcPathFile);
+int SCPCreateEnterDir(ssh_scp *scp, char *dstPath);
+int CaptureData(ssh_channel *chan, char *buf, int nBytes);
+int SendData(ssh_channel *chan, char *buf, int nbytes);
+int SendDataWaitPrompt(ssh_channel *chan, char *cmd, char *buf, int nbytes);
+void RemoveAnsiEraseScreen(char *buf);
+void RemoveAnsiHomePos(char *buf);
+int WaitForString(ssh_channel *chan, char *buf, int maxBytes, const char *str);
+int WaitForPrompt(ssh_channel *chan, char *buf, int maxBytes);
+int WaitForPromptPrintOrExit(ssh_session *sess, ssh_channel *chan, char *buf);
+void HandleErrorAndExit(ssh_session *sess);
+int PromptGetUserNm(char *userNm, int max);
+int PromptGetPassword(char *password, int max);
+int GetUserNm(char *ipAddr, char *userNm);
+int GetHostPath(char *ipAddr, char *fileNm, char *buf);
+void PrintData(char *buf, int numBytes);
+int SendAndCaptureRemotels(ssh_session *sess, ssh_channel *chan, char *buf);
+int ProcessRemotels(const char *inStr);
+int RemoteSSHConnect(ssh_channel *chan, const char *ipAddr, char *pword);
+int RemoteSSHExit(ssh_channel *chan);
+int CheckAndKillProc(ssh_channel *chan, char *path, char *fileNm);
+int CheckAndKillProcRmt(ssh_channel *chan, const char *ipAddr, char* pword, char *path, char *fileNm);
+int IsProcRunning(ssh_channel *chan, char *path, char *fileNm, char *procID);
+int CheckProcPS(ssh_channel *chan, char *path, char *fileNm, char *procID);
+int GetPIDFromPS(char *buf, char *procPathNm, char *procID);
+int IsExePathFromProc(ssh_channel *chan, char *path, char *fileNm, char *procID);
+int RemoteSCP(ssh_channel *chan, const char *ipAddr, const char *dstPath, char *pword);
+int PasswordWaitAndEnter(ssh_channel *chan, char *pword);
+int GatherUserRmtFolder(char *rmtPath);
+int GatherUserRmtNum(void);
+int GetFileName(char *pathAndName, char *outStr);
+int WaitForEitherString(ssh_channel *chan, char *buf, int maxBytes, const char *str, const char *str2);
+int TransferRemotes(ssh_session *sess, ssh_channel *chan, unsigned int sndMask, unsigned char isMask, char *dstPath, char *pword, unsigned char isKill);
+void AppendSlashPath(char *path);
+
+
+#endif
+
+

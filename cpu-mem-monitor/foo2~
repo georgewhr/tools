@@ -1,0 +1,66 @@
+#!/bin/bash
+
+
+
+myFile=mem_`date +%F_%T`.txt
+
+touch "$myFile"
+
+cpu="cpu_ld"
+
+echo -n "$cpu" >> "$myFile" 
+echo -n "   " >> "$myFile"
+
+
+for var in $@
+do
+        echo -n "$var" >> "$myFile"
+        echo -n "   " >> "$myFile"
+
+done
+
+echo >> "$myFile"
+
+while true
+do
+
+        echo -n `cat /proc/loadavg | cut -c 1-4` >> "$myFile"
+
+        y=${#cpu}
+
+        while [ $y -gt 1 ]
+
+        do
+             echo -n " " >> "$myFile"
+             y=$(( $y - 1 )) 
+
+        done
+
+
+        for var in $@
+
+        do
+
+            #echo -n `ps -eo pmem,args | grep "$var" | grep -v grep | cut -c 2-4`
+            #echo "     "
+            cmd=`ps -eo pmem,args | grep "$var" | grep -v grep | grep -v bash | cut -c 2-4`
+            echo -n "$cmd" >> "$myFile"
+
+            x=${#var}
+
+            while [ $x -gt 0 ]
+            do
+                  echo -n " " >> "$myFile"
+                  x=$(( $x - 1 ))
+            done
+
+
+
+        done
+
+        echo >> "$myFile"
+
+        sleep 1
+
+done
+
