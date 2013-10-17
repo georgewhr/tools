@@ -1,6 +1,4 @@
 /**************************************************************************
-*
-*   Copyright:      TE Connectivity
 *   Module:
 *   Filename:       userifSend.c
 *   Author:
