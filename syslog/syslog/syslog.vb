@@ -1,4 +1,11 @@
-﻿Public Class syslog
+'********************************************************
+'Syslog Analyzer
+'Author:George Wang
+'georgewhr@gmail.com
+'********************************************************
+
+
+Public Class syslog
     Dim documentName As String = ""
     Dim isChanged As Boolean = False
     Dim inputFile As System.IO.StreamReader
