@@ -1,4 +1,0 @@
-﻿
-Class ZipEntry
-
-End Class
